@@ -30,6 +30,9 @@ $(document).ready(function() {
     });
 
     $('#load').click(function(e) {
+        // возможно я не правильно понял, что должна делать третяя кнопка,
+        // а именно, верстка, которую нужно загрузить, как мне показалось,
+        // необходимо сделать на js, как я и сделал. Сильно не заморачивался... 
         e.preventDefault();
         body.innerHTML = '';
         let header = document.createElement('h1')
