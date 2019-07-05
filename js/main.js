@@ -1,102 +1,137 @@
-$(document).ready(function() {
+document.querySelector('#create').addEventListener('click', showCreateWindow),
+document.querySelector('#close-create-window').addEventListener('click', closeCreateWindow),
+document.querySelector('#form-clean-btn').addEventListener('click', cleanForm),
+document.querySelector('#form-create-btn').addEventListener('click', createEmployee),
+document.querySelector('#select-1').addEventListener('click', swicthForm)
 
-    $('#link').click(function(e) {
-        e.preventDefault();
-        document.location = 'http://ig-v.ru/';
-    });
-    let buttons = document.getElementsByTagName('button');
-    let body = $('body')[0];
-    let btnsWrp = document.querySelector('.btns')
-    body.isChange = false;
+const createForm = document.querySelector('#create-form'),
+mainTable = document.querySelector('.main__table');
+createForm.elements.forEach = Array.prototype.forEach;
+const stuf = [];
 
-    $('#change').click(function(e) {
-        e.preventDefault();
+function swicthForm(e) {
+    if(this.value === 'val-1') console.log(this.value);
+    if(this.value === 'val-2') console.log(this.value);
 
-        if (body.isChange) {
-            body.style.backgroundColor = '#19152A';
-            body.isChange = false;
-            Array.from(buttons).forEach(function(el) {
-                el.style.width = '100px';
-                el.style.display = 'inline';
-            });
-        } else {
-            body.style.backgroundColor = '#620707';
-            body.isChange = true;
-            Array.from(buttons).forEach(function(el) {
-                el.style.width = '200px';
-                el.style.display = 'block';
-            });
+}
+
+function cleanForm() {
+    createForm.elements.forEach(function(el){
+        if(el.tagName === 'INPUT') {
+            el.value = '';
         }
     });
+}
 
-    $('#load').click(function(e) {
-        // возможно я не правильно понял, что должна делать третяя кнопка,
-        // а именно, верстка, которую нужно загрузить, как мне показалось,
-        // необходимо сделать на js, как я и сделал. Сильно не заморачивался... 
-        e.preventDefault();
-        body.innerHTML = '';
-        let header = document.createElement('h1')
-        header.innerHTML = "Header";
-        header.style.textAlign = 'center';
-        header.style.color = '#fff';
-        let container = document.createElement('div');
-        container.style
-            .cssText = `
-		     width: 80%;
-		     margin-left :auto; 
-		     margin-right: auto;
-		     display: flex;
-		     flex-wrap: wrap;
-		     justify-content: space-between;
-		     `;
+function showCreateWindow(e) {
+    e.preventDefault();
+    document.querySelector('#create-window').classList.add('active')
+}
 
-        let text = document.createElement('span');
-        text.classList.add('text');
-        text.innerHTML = `
-			Lorem ipsum dolor sit amet, 
-			consectetur adipisicing elit.
-			 Praesentium exercitationem
-			  consectetur quisquam nemo 
-			  eveniet iure cum explicabo
-			   suscipit fugit, rerum, nam 
-			   nulla quasi fuga incidunt
-			    laudantium, provident sint 
-			    ratione. Laboriosam animi
-			     mollitia sed quos voluptates
-			      cum iusto, itaque, repellendus
-			       nobis dicta aliquam nulla
-			        ducimus tempora aliquid 
-			        facilis dolore repudiandae illum!
-			`
-        let block = document.createElement('div')
-        block.style.cssText = `
-			width: 30%;
-			min-height: 100px;
-			border: 1px solid #fff;
-			border-radius: 10px;
-			color: #fff;
-			display: flex;
-			padding: 20px;
-			margin-bottom: 20px;
-			`;
+function closeCreateWindow(e) {
+    e.preventDefault();
+    document.querySelector('#create-window').classList.remove('active')
+}
 
-        block.appendChild(text);
-        block.classList.add('block');
+function getInfo() {
 
-        let block2 = block.cloneNode(true);
+    const info = []; // инфа из формы
+    createForm.elements.forEach(function(el){
+       
+        if(el.tagName === 'INPUT' || el.tagName === 'SELECT') {
 
-        body.appendChild(header);
-        body.appendChild(container);
+            if(el.type === 'checkbox') {
+                info.push(el.checked); 
+            } else {
+                info.push(el.value);
+            }
 
-        for (var i = 0; i < 6; i++) {
-            container.appendChild(block.cloneNode(true))
         }
+    })
 
+    return info
+}
 
-
+function createEmployee(e) {
+    e.preventDefault();
+    // получаем массив данныйх из формы
+    const arr = getInfo();
+    const opts = {};
+    opts.type = arr[0];
+    opts.name = arr[1];
+    opts.surname = arr[2];
+    opts.patronym = arr[3];
+    opts.age = arr[4];
+    opts.hasChildren = arr[5];
+    opts.status = arr[6];
+    opts.expiriens = arr[7];
+    opts.dateOfEmployment = arr[8];
+    opts.organization = arr[9];
+    stuf.push(new Employee(opts));
+    // console.log(stuf);
+    newRow();
+}
+let countOfRow = 0;
+function newRow() {
+    removeAllRows();
+    const row = document.createElement('div');
+    row.classList.add('table__row');
+    row.classList.add('for-fill');
+    row.innerHTML += `<div class="table__cell">${stuf[0].name}</div>`;
+    row.count = countOfRow;
+    stuf.forEach(function(el) {
+        mainTable.appendChild(row.cloneNode()); // добавляем ряд в таблицу
+        // console.log(el)
     });
 
+    countOfRow++;
+    fillRow();
 
 
+}
 
-});
+function fillRow() {
+    const rows = document.querySelectorAll('.for-fill');
+    rows.forEach = Array.prototype.forEach;
+    // console.log(rows)
+    rows.forEach(function(el, i){
+        el.innerHTML += `<div class="table__cell">${stuf[i].name}</div>`;
+        el.innerHTML += `<div class="table__cell">${stuf[i].surname}</div>`;
+        el.innerHTML += `<div class="table__cell">${stuf[i].age}</div>`;
+        el.innerHTML += `<div class="table__cell">${stuf[i].organization}</div>`;
+        el.innerHTML += `<div class="table__cell">${stuf[i].status}</div>`;
+        el.innerHTML += `<div class="table__cell table__cell-btns"><button>редактировать</button> <button>удалить</button></div>`;
+    });
+}
+
+function removeAllRows() {
+
+    let length = mainTable.children.length
+    for (var i = 0; i < length; i++) {
+        if(i === 0) continue;
+        mainTable.children[mainTable.children.length - 1].remove();     
+    }
+}
+
+function Person(obj) {
+    this.name = obj.name || 'не указано';
+    this.age = obj.age || 'не указано';
+    this.surname = obj.surname || 'не указано';
+    this.patronym = obj.patronym || 'не указано';
+}
+
+function Employee(obj) {
+    Person.call(this, obj);
+    this.type = obj.type;
+    this.hasChildren = obj.hasChildren;
+    this.status = obj.status;
+    this.dateOfEmployment = obj.dateOfEmployment;
+    this.organization = obj.organization;
+}
+
+Person.prototype.getFullInfoJSON = function() {
+    return JSON.stringify(this);
+    // return this;
+}
+
+Employee.prototype = Object.create(Person.prototype);
